@@ -13,8 +13,8 @@
     '214': { seqs: [[2, 1, 4], { s: [2, 4], gap: 2 }], win: 20 },
     '623': { seqs: [[6, 2, 3], [3, 2, 3], [6, 2, 3, 6]], win: 22 },
     '22': { seqs: [[2, 5, 2], [2, 1, 2], [2, 3, 2]], win: 18 },
-    '236236': { seqs: [[2, 3, 6, 2, 3, 6], { s: [2, 6, 2, 6], gap: 3 }, { s: [2, 3, 6, 2, 6], gap: 3 }, { s: [2, 6, 2, 3, 6], gap: 3 }], win: 45 },
-    '214214': { seqs: [[2, 1, 4, 2, 1, 4], { s: [2, 4, 2, 4], gap: 3 }, { s: [2, 1, 4, 2, 4], gap: 3 }, { s: [2, 4, 2, 1, 4], gap: 3 }], win: 45 },
+    '236236': { seqs: [[2, 3, 6, 2, 3, 6], { s: [2, 6, 2, 6], gap: 4 }, { s: [2, 3, 6, 2, 6], gap: 4 }, { s: [2, 6, 2, 3, 6], gap: 4 }, { s: [2, 3, 5, 2, 3, 6], gap: 6 }], win: 60, gap: 12, hold: 18 },
+    '214214': { seqs: [[2, 1, 4, 2, 1, 4], { s: [2, 4, 2, 4], gap: 4 }, { s: [2, 1, 4, 2, 4], gap: 4 }, { s: [2, 4, 2, 1, 4], gap: 4 }, { s: [2, 1, 5, 2, 1, 4], gap: 6 }], win: 60, gap: 12, hold: 18 },
     '[4]6': { charge: [1, 4, 7], len: 40, seqs: [[[6, 3, 9]]], win: 12 },
     '[2]8': { charge: [1, 2, 3], len: 40, seqs: [[[7, 8, 9]]], win: 12 },
     '[4]646': { charge: [1, 4, 7], len: 40, seqs: [[[6, 3, 9], [4, 1, 7], [6, 3, 9]]], win: 36 }
@@ -74,8 +74,9 @@
     }
     return runs;
   }
-  function matchSeq(runs, seq, press, win, minEnd, gap) {
+  function matchSeq(runs, seq, press, win, minEnd, gap, hold) {
     gap = gap === undefined ? STEP_GAP : gap;
+    hold = hold || MAX_HOLD;
     let i = runs.length - 1;
     while (i >= 0 && runs[i].start > press) i--;
     let k = seq.length - 1, found = -1;
@@ -87,7 +88,7 @@
       while (j >= 0 && !has(seq[k], runs[j].d)) { if (runs[j].end < press - win) return null; j--; }
       if (j < 0 || runs[j].end < press - win) return null;
       if (runs[first].start - runs[j].end - 1 > gap) return null;
-      if (first !== found && runs[first].end - runs[first].start + 1 > MAX_HOLD) return null;
+      if (first !== found && runs[first].end - runs[first].start + 1 > hold) return null;
       first = j; j--;
     }
     if (runs[first].end <= minEnd) return null;
@@ -107,7 +108,7 @@
     if (!spec) return null;
     for (const sq of spec.seqs) {
       const seq = Array.isArray(sq) ? sq : sq.s;
-      const r = matchSeq(runs, seq, press, spec.win, minEnd, Array.isArray(sq) ? undefined : sq.gap);
+      const r = matchSeq(runs, seq, press, spec.win, minEnd, Array.isArray(sq) ? spec.gap : sq.gap, spec.hold);
       if (r && (!spec.charge || chargeOk(runs, r.idx, spec))) return r;
     }
     return null;
@@ -208,7 +209,7 @@
       if (!r) return null;
       const btn = (ev.nota.match(/[LMH][PK]?/) || [''])[0];
       const hs = ['normal', 'unique', 'tc'].includes(ev.kind) ? (HITSTOP[btn[0]] || 12) : ['special', 'followup'].includes(ev.kind) ? 12 : 0;
-      return { s: r[0], a: r[1], t: r[2], c: r[3], hs };
+      return { s: r[0], a: r[1], t: r[2], c: r[3], hs: hs * (r[4] || 1) };
     }
     function landing(f) { let g = f; while (g < air.length && air[g]) g++; return g; }
     function allowedCancel(prev, ev) {

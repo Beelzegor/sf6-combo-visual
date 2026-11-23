@@ -108,7 +108,7 @@ Copia `data/characters/juri.js` y cambia:
 - `tc`: target combos, paso por paso.
 - `specials`: motion (`236`, `214`, `623`, `236236`, `214214`, `[4]6`, `[2]8`, `[4]646`), botones y tipo (`special` o `super` con su `tag` SA1, SA2 o SA3). El orden importa: primero Super Arts, luego OD y al final los especiales normales.
 - `followups`: seguimientos que salen después de un especial.
-- `fd`: frame data por notación o nombre: `[arranque, activos, total, cancels]`, donde los cancels son `c` (chain), `s` (especial), `S` (super) y `t` (target combo).
+- `fd`: frame data por notación o nombre: `[arranque, activos, total, cancels, impactos]`, donde los cancels son `c` (chain), `s` (especial), `S` (super) y `t` (target combo), e `impactos` es opcional (por defecto 1).
 - `modern.sp`: especial asistido por dirección (`N`, `F`, `D`, `B`) y `modern.air`.
 
 Luego añade el `<script>` en `index.html` y `overlay.html`, y crea casos en `tests/engine.test.js`.

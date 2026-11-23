@@ -19,6 +19,7 @@ const cases = [
   ['guile', 'classic', 'P1', '5x4 4x20 6x2 6+HPx3 5x30', ['6HP']],
   ['guile', 'classic', 'P1', '5x6 2+MPx3 2x8 2+MPx3 2x40', ['2MP', '2MP']],
   ['guile', 'classic', 'P1', '5x4 1x45 6x2 4x2 6x2 6+LPx3 5x60', ['[4]646LP']],
+  ['juri', 'classic', 'P1', '5x6 6+HPx3 6x30 2x8 1x4 4x14 5x6 2x12 1x5 4x6 4+MPx3 5x40', ['6HP', '214214MP']],
   ['juri', 'modern', 'P1', '5x6 2+Mx3 2x6 5x2 5+SPx3 5x30 4+SP+Hx3 5x20', ['2M', 'SP', '4SP+H']],
   ['juri', 'modern', 'P1', '5x6 5+AUTO+Lx3 5x10 5+AUTO+Lx3 5x20 6+AUTO+SPx3 5x30', ['AUTO+L', 'AUTO+L', '6AUTO+SP']]
 ];
@@ -34,6 +35,12 @@ const fixtures = [
   {
     file: 'juri_fse_trial.json', char: 'juri',
     name: 'Trial real con Feng Shui Engine (pasos que el juego marcó como conseguidos)',
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    minSteps: 30
+  },
+  {
+    file: 'juri_fse_trial_2.json', char: 'juri',
+    name: 'Mismo trial, SA2 con la primera media vuelta incompleta (2, 1, neutral, 2, 1, 4)',
     checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
     minSteps: 30
   }

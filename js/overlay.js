@@ -21,10 +21,10 @@
   function draw() {
     if (mode === 'trial') {
       if (!steps.length) { wrap.innerHTML = '<div style="padding:20px;background:rgba(0,0,0,.6)">Falta el combo: copia el enlace desde "Overlay OBS: este combo".</div>'; return; }
-      wrap.innerHTML = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1' && q.bg !== 'solid', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
+      wrap.innerHTML = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1' && q.bg !== 'solid', opaque: q.bg === 'green', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
     } else {
       const shown = recSteps.slice(-(+q.n || 6));
-      wrap.innerHTML = shown.length ? renderCombo(shown, { tag, names: true, width, header: false, sel: shown.length - 1, nota: false }).svg : '';
+      wrap.innerHTML = shown.length ? renderCombo(shown, { tag, opaque: q.bg === 'green', names: true, width, header: false, sel: shown.length - 1, nota: false }).svg : '';
     }
   }
 

@@ -71,7 +71,7 @@ Opciones: `--puerto 9000`, `--lado 2`.
 **Si la fuente de navegador de OBS no detecta el control** (problema conocido de algunas versiones de OBS):
 
 - Desconecta y vuelve a conectar el control con OBS ya abierto, o ejecuta OBS como administrador. Con controles Bluetooth, prueba por cable.
-- Alternativa sin descargas: pulsa **Abrir overlay en ventana (fondo verde)** en la web. Deja esa ventana sin minimizar (puede quedar detrás del juego), añádela en OBS con **Captura de ventana** y aplícale el filtro **Clave cromática** en verde.
+- Alternativa sin descargas: pulsa **Abrir overlay en ventana (fondo verde)** en la web. Deja esa ventana sin minimizar (puede quedar detrás del juego), añádela en OBS con **Captura de ventana**, aplícale el filtro **Clave de color** en verde (la Clave cromática apaga los amarillos) y recorta la barra de direcciones con Alt + arrastrar.
 - O usa el capturador: el overlay lo detecta solo.
 
 Parámetros del enlace: `w` (ancho), `port`, `side` (`P1` o `P2`), `n` (pasos visibles en modo en vivo), `bg=1` (con fondo).

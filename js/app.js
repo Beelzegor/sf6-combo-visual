@@ -386,7 +386,7 @@ $('openOverlayWin').onclick = () => {
   const url = overlayURL('trial') + '&bg=green';
   let w = null;
   try { w = window.open(url, 'sf6overlay', 'popup=yes,width=960,height=900'); } catch (e) { w = null; }
-  if (w) { toast('Overlay abierto en una ventana aparte'); return; }
+  if (w) { modal('<h3 style="margin-top:0">Overlay abierto en otra ventana</h3><p>En OBS: <b>Captura de ventana</b> de esa ventana, filtro <b>Clave de color</b> en verde (no Clave cromática, que apaga los amarillos) y recorta la barra de direcciones con <b>Alt + arrastrar</b> el borde superior. No minimices la ventana; puede quedar detrás del juego.</p>'); return; }
   modal('<h3 style="margin-top:0">El navegador no dejó abrir la ventana</h3><p>Puede que el bloqueador de ventanas emergentes la haya frenado. Permite las ventanas emergentes para esta página (icono en la barra de direcciones) y vuelve a pulsar el botón, o copia este enlace y ábrelo en una ventana nueva (Ctrl+N):</p><textarea style="width:600px;max-width:85vw;height:90px" readonly>' + esc(url) + '</textarea>');
 };
 $('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&pad=' + padPayload());

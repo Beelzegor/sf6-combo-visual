@@ -77,9 +77,9 @@ function renderCombo(steps, o) {
   const pad = header ? 22 : 0;
   const H = headH + listH + footH + pad + (header ? 10 : 0);
   let g = ICON_DEFS.replace('</defs>', `<linearGradient id="bgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1027"/><stop offset="1" stop-color="#07060b"/></linearGradient>
-    <linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a23cf0"/><stop offset=".55" stop-color="#5d1aa0"/><stop offset="1" stop-color="#5d1aa0" stop-opacity=".15"/></linearGradient>
-    <linearGradient id="rowg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1b1626" stop-opacity=".96"/><stop offset=".7" stop-color="#15111e" stop-opacity=".9"/><stop offset="1" stop-color="#15111e" stop-opacity=".35"/></linearGradient>
-    <linearGradient id="hdg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a2bd0"/><stop offset=".6" stop-color="#3b1366"/><stop offset="1" stop-color="#3b1366" stop-opacity="0"/></linearGradient>
+    <linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a23cf0"/><stop offset=".55" stop-color="#5d1aa0"/><stop offset="1" stop-color="#5d1aa0" stop-opacity="${o.opaque ? 1 : '.15'}"/></linearGradient>
+    <linearGradient id="rowg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1b1626" stop-opacity="${o.opaque ? 1 : '.96'}"/><stop offset=".7" stop-color="#15111e" stop-opacity="${o.opaque ? 1 : '.9'}"/><stop offset="1" stop-color="#15111e" stop-opacity="${o.opaque ? 1 : '.35'}"/></linearGradient>
+    <linearGradient id="hdg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a2bd0"/><stop offset=".6" stop-color="#3b1366"/><stop offset="1" stop-color="#3b1366" stop-opacity="${o.opaque ? 1 : '0'}"/></linearGradient>
     <pattern id="str" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="7" height="14" fill="#ffffff" opacity=".018"/></pattern></defs>`);
   if (header) {
     if (!o.transparent) g += `<rect width="${W}" height="${H}" fill="url(#bgg)"/><rect width="${W}" height="${H}" fill="url(#str)"/>`;

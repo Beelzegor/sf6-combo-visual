@@ -13,7 +13,7 @@ function createBridge(handlers) {
       b.ws.onclose = () => {
         const was = b.connected;
         b.connected = false;
-        handlers.status && handlers.status('off', was ? 'Se perdió la conexión con el capturador' : 'No se encontró el capturador. ¿Está abierto?');
+        handlers.status && handlers.status('off', was ? 'Se perdió la conexión con el capturador' : 'No se encontró el capturador. Ábrelo con capture/iniciar_capturador.bat y responde sus preguntas hasta ver "Puente activo".');
         if (b.wantOpen && handlers.autoRetry) b.retry = setTimeout(() => b.connect(), 2000);
       };
       b.ws.onerror = () => {};

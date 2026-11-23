@@ -42,6 +42,10 @@ Cada personaje es un archivo en `data/characters/`. Añadir uno nuevo es copiar 
 
 ## Capturador (para grabar con SF6 abierto)
 
+**En Windows:** abre la carpeta `capture` y haz doble clic en `iniciar_capturador.bat`. Instala lo necesario y abre el capturador (necesitas Python 3 instalado con la opción "Add python.exe to PATH").
+
+Desde una terminal:
+
 ```bash
 cd capture
 pip install -r requirements.txt

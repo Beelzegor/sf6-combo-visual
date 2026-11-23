@@ -16,7 +16,7 @@ SF6.registerCharacter({
     specials: [
       { name: 'Sakkai Fuhazan', tag: 'SA1', m: '236236', type: 'K', min: 1, max: 2, kind: 'super' },
       { name: 'Kaisen Dankairaku', tag: 'SA3', m: '214214', type: 'K', min: 1, max: 2, kind: 'super' },
-      { name: 'Feng Shui Engine', tag: 'SA2', m: '214214', type: 'P', min: 1, max: 2, kind: 'super' },
+      { name: 'Feng Shui Engine', tag: 'SA2', m: '214214', type: 'P', min: 1, max: 2, kind: 'super', install: { frames: 600, freeze: 60, rule: 'chain' } },
       { name: 'Shiku-sen OD', m: '214', type: 'K', min: 2, max: 2, air: true, fwd: true, kind: 'special' },
       { name: 'Shiku-sen', m: '214', type: 'K', min: 1, max: 1, air: true, fwd: true, kind: 'special' },
       { name: 'Saihasho OD', m: '236', exact: ['LK', 'MK'], kind: 'special' },
@@ -37,7 +37,7 @@ SF6.registerCharacter({
       '2LP': [4, 3, 14, 'csS'], '2MP': [6, 4, 23, 'sS'], '2HP': [8, 4, 34, 'sS'],
       '2LK': [5, 3, 15, 'c'], '2MK': [8, 3, 29, 'sS'], '2HK': [10, 3, 35, ''],
       '6MP': [8, 3, 27, 'sS'], '6MK': [21, 2, 43, ''], '6HP': [15, 11, 45, 'sS'], '4HK': [10, 12, 40, 'sS'],
-      'j.MP': [7, 5, 0, 'sS'],
+      'j.LP': [5, 6, 0, ''], 'j.MP': [7, 5, 0, 'sS'], 'j.HP': [12, 6, 0, ''], 'j.LK': [4, 6, 0, ''], 'j.MK': [6, 6, 0, ''], 'j.HK': [10, 6, 0, ''],
       'TC:Death Crest:0': [6, 5, 21, 'sSt'], 'TC:Death Crest:1': [12, 3, 33, 'St'], 'TC:Death Crest:2': [17, 3, 46, ''],
       'Fuhajin (ligero)': [10, 4, 34, ''], 'Fuhajin (medio)': [13, 4, 37, ''], 'Fuhajin (fuerte)': [25, 5, 48, ''], 'Fuhajin OD': [12, 6, 38, ''],
       'Saihasho': [16, 10, 45, 's'], 'Ankensatsu': [24, 4, 46, 's'], 'Go Ohsatsu': [18, 4, 48, 's'],

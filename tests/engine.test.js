@@ -30,5 +30,24 @@ for (const [c, sch, side, dsl, exp] of cases) {
   if (pass) ok++;
   console.log((pass ? 'OK  ' : 'FAIL') + ' [' + c + '/' + sch + '] ' + SF6.stepsToText(r.steps) + '  |  ' + r.steps.map(s => s.name).join(' / ') + (pass ? '' : '   esperado: ' + exp.join(', ') + '   desc: ' + r.discarded.map(d => d.what + ' ' + d.reason).join('; ')));
 }
-console.log(ok + '/' + cases.length);
-process.exit(ok === cases.length ? 0 : 1);
+const fixtures = [
+  {
+    file: 'juri_fse_trial.json', char: 'juri',
+    name: 'Trial real con Feng Shui Engine (pasos que el juego marcó como conseguidos)',
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    minSteps: 30
+  }
+];
+let fok = 0;
+for (const fx of fixtures) {
+  const rec = JSON.parse(require('fs').readFileSync(__dirname + '/fixtures/' + fx.file, 'utf8'));
+  const r = SF6.parse(rec, { char: fx.char, side: rec.side || 'P1' });
+  const notas = r.steps.map(s => s.nota);
+  let i = 0;
+  for (const n of notas) if (i < fx.checkpoints.length && n === fx.checkpoints[i]) i++;
+  const pass = i === fx.checkpoints.length && notas.length >= fx.minSteps;
+  if (pass) fok++;
+  console.log((pass ? 'OK  ' : 'FAIL') + ' [fixture] ' + fx.name + ': ' + notas.length + ' pasos, ' + i + '/' + fx.checkpoints.length + ' checkpoints');
+}
+console.log(ok + '/' + cases.length + ' casos, ' + fok + '/' + fixtures.length + ' grabaciones reales');
+process.exit(ok === cases.length && fok === fixtures.length ? 0 : 1);

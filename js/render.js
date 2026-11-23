@@ -63,7 +63,17 @@ function renderCombo(steps, o) {
   const ROW = 60, NOTE = 24, GAP = 6, LEFT = 64;
   const rows = steps.map(s => ({ s, h: ROW + (s.note ? NOTE : 0) }));
   const listH = rows.reduce((a, r) => a + r.h + GAP, 0);
-  const footH = o.nota ? 46 : 0;
+  const notaLines = [];
+  if (o.nota) {
+    const maxCh = Math.floor((W - 60) / 9.7);
+    let line = '';
+    SF6.stepsToText(steps).split(/(?<=,|>) /).forEach(tok => {
+      if ((line + ' ' + tok).length > maxCh && line) { notaLines.push(line); line = tok; }
+      else line = line ? line + ' ' + tok : tok;
+    });
+    if (line) notaLines.push(line);
+  }
+  const footH = o.nota ? 26 + notaLines.length * 22 : 0;
   const pad = header ? 22 : 0;
   const H = headH + listH + footH + pad + (header ? 10 : 0);
   let g = ICON_DEFS.replace('</defs>', `<linearGradient id="bgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1027"/><stop offset="1" stop-color="#07060b"/></linearGradient>
@@ -132,7 +142,7 @@ function renderCombo(steps, o) {
     g += '</g>';
     y += r.h + GAP;
   });
-  if (o.nota) g += `<text x="${header ? 30 : 4}" y="${y + 30}" font-family="Consolas,monospace" font-size="16" fill="#8d82a6">${esc(SF6.stepsToText(steps))}</text>`;
+  notaLines.forEach((ln, k) => { g += `<text x="${header ? 30 : 4}" y="${y + 30 + k * 22}" font-family="Consolas,monospace" font-size="16" fill="#8d82a6">${esc(ln)}</text>`; });
   return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg>`, W, H };
 }
 

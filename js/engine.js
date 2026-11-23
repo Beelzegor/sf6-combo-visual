@@ -25,7 +25,7 @@
   const CLUSTER = 2;
   const PLINK = 3;
   const JUMP_PRE = 4;
-  const JUMP_LEN = 41;
+  const JUMP_LEN = 38;
   const BUFFER = 4;
   const HITSTOP = { L: 10, M: 12, H: 14 };
 
@@ -188,7 +188,8 @@
     const dashes = findDashes(runs, air);
     const items = [...clusters.map(c => ({ t: 'press', f: c.f, c })), ...dashes.map(d => ({ t: 'dash', f: d.f, d }))].sort((a, b) => a.f - b.f);
     const events = [];
-    let lastSpecialPress = -1, cur = null, airUsedUntil = -1;
+    let lastSpecialPress = -1, cur = null, airUsedUntil = -1, install = null;
+    const inInstall = f => install && f >= install.from && f < install.until;
     const last = () => events[events.length - 1];
     const spByName = n => cd.specials.find(s => s.name === n);
 
@@ -198,8 +199,7 @@
       if (ev.tcKey) r = fd[ev.tcKey];
       else if (ev.kind === 'throw') r = [5, 3, 30, ''];
       else if (['normal', 'unique', 'tc'].includes(ev.kind)) r = fd[ev.nota] || fd[ev.base];
-      else if (ev.nota === 'DR') r = [1, 1, 10, ''];
-      else if (ev.nota === 'PDR') r = [1, 1, 10, ''];
+      else if (ev.nota === 'DR' || ev.nota === 'PDR' || ev.nota === 'PARRY~66') r = [9, 22, 32, 'n'];
       else if (ev.nota === '66') r = [1, 1, 19, ''];
       else if (ev.nota === '44') r = [1, 1, 23, ''];
       else if (ev.name === 'Drive Parry') r = [1, 30, 20, 'D'];
@@ -213,6 +213,12 @@
     function landing(f) { let g = f; while (g < air.length && air[g]) g++; return g; }
     function allowedCancel(prev, ev) {
       const c = prev.fd.c || '';
+      if (c.includes('n') && ['normal', 'unique', 'tc'].includes(ev.kind)) return true;
+      if (ev.name === 'Drive Parry' && ['normal', 'unique', 'tc'].includes(prev.ev.kind) && (c.includes('s') || (inInstall(ev.f) && install.rule === 'chain'))) return true;
+      if (inInstall(ev.f) && install.rule === 'chain' && ['normal', 'unique', 'tc'].includes(prev.ev.kind)) {
+        if (ev.nota === prev.ev.nota) return false;
+        if (['normal', 'unique', 'tc', 'special', 'super', 'followup'].includes(ev.kind) || ev.nota === 'DR') return true;
+      }
       if (ev.kind === 'tc' && ev.tcStep > 0) return c.includes('t');
       if (ev.kind === 'followup') return true;
       if (ev.kind === 'normal' && /^[25](LP|LK)$/.test(ev.nota)) return c.includes('c');
@@ -223,16 +229,17 @@
     }
     function gate(ev) {
       const fd = fdOf(ev);
+      const airChain = inInstall(ev.f) && install.rule === 'chain' && cur && cur.ev.nota.startsWith('j.') && cur.ev.nota !== ev.nota;
       if (!o.timing || !fd) {
-        if (ev.kind === 'normal' && ev.nota.startsWith('j.') && ev.f < airUsedUntil) return { ok: false, reason: 'Solo sale un golpe por salto' };
+        if (ev.kind === 'normal' && ev.nota.startsWith('j.') && ev.f < airUsedUntil && !airChain) return { ok: false, reason: 'Solo sale un golpe por salto' };
         return { ok: true, at: ev.f, via: cur && cur.ev && ev.f - cur.at < 30 && ['special', 'super', 'followup'].includes(ev.kind) ? 'cancel' : (ev.kind === 'tc' && ev.tcStep > 0) || ev.nota === 'DR' ? 'cancel' : 'free', fd };
       }
-      if (ev.kind === 'normal' && ev.nota.startsWith('j.') && ev.f < airUsedUntil) return { ok: false, reason: 'Solo sale un golpe por salto' };
+      if (ev.kind === 'normal' && ev.nota.startsWith('j.') && ev.f < airUsedUntil && !airChain) return { ok: false, reason: 'Solo sale un golpe por salto' };
       if (!cur || !cur.fd) return { ok: true, at: ev.f, via: 'free', fd };
       const free = cur.at + cur.fd.t + cur.fd.hs;
       if (ev.f >= free - BUFFER && ev.nota !== 'DR') return { ok: true, at: Math.max(ev.f, free), via: 'free', fd };
       const from = cur.at + cur.fd.s - BUFFER;
-      const to = cur.at + cur.fd.s + cur.fd.a + cur.fd.hs + 6;
+      const to = cur.at + cur.fd.s + cur.fd.a + cur.fd.hs + 10;
       if (ev.f >= from && ev.f <= to && allowedCancel(cur, ev)) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
       return { ok: false, reason: 'Pulsado durante la animación de ' + (cur.ev.name || cur.ev.nota) };
     }
@@ -242,11 +249,14 @@
       if (ev.tcPrev) { const p = ev.tcPrev; p.kind = 'tc'; p.tcName = ev.tcName; p.tcStep = 0; p.tcKey = 'TC:' + ev.tcName + ':0'; p.name = ev.tcName + ' (1)'; delete ev.tcPrev; }
       push(ev);
       const fd = g.fd || null;
+      if (install && ev.at >= install.from && ev.at < install.until && fd) install.until += fd.hs;
       if (ev.kind === 'normal' && ev.nota.startsWith('j.')) {
         const land = landing(ev.f);
         airUsedUntil = land;
         cur = { ev, at: ev.at, fd: { s: fd ? fd.s : 6, a: fd ? fd.a : 5, t: land + 3 - ev.at, c: fd ? fd.c : '', hs: 0 } };
       } else cur = { ev, at: ev.at, fd };
+      const spData = ev.base && spByName(ev.base);
+      if (spData && spData.install) install = { from: ev.at, until: ev.at + spData.install.frames + (spData.install.freeze || 0), rule: spData.install.rule, name: spData.name };
       if (ev.kind === 'special' || ev.kind === 'super') {
         lastSpecialPress = ev.f;
         if (ev.air) for (let k = ev.f; k < air.length && air[k]; k++) air[k] = 0;
@@ -384,11 +394,14 @@
     for (const it of items) {
       if (it.t === 'dash') {
         const pe = last();
-        if (it.d.d === 6 && pe && pe.name === 'Drive Parry' && it.f - pe.f <= 30) {
-          pe.kind = 'drive'; pe.name = 'Drive Rush (desde Parry)'; pe.nota = modern ? 'PARRY~66' : 'PDR';
-          cur = { ev: pe, at: it.f, fd: { s: 1, a: 1, t: 10, c: '', hs: 0 } };
+        if (it.d.d === 6 && pe && pe.name === 'Drive Parry' && it.f - pe.f <= 40) {
+          if (pe.via === 'cancel') { pe.name = 'Drive Rush (cancel)'; pe.nota = 'DR'; }
+          else { pe.name = 'Drive Rush (desde Parry)'; pe.nota = modern ? 'PARRY~66' : 'PDR'; }
+          pe.kind = 'drive';
+          cur = { ev: pe, at: it.f, fd: { s: 9, a: 22, t: 32, c: 'n', hs: 0 } };
           continue;
         }
+        if (cur && cur.ev && (cur.ev.nota === 'DR' || cur.ev.nota === 'PDR') && it.f < cur.at + 32) { discarded.push({ f: it.f, what: '66', reason: 'Parte del Drive Rush' }); continue; }
         if (it.d.d === 6 && pe && ['normal', 'unique', 'tc'].includes(pe.kind) && !pe.nota.startsWith('j.')) {
           const dr = { f: it.f, kind: 'drive', name: 'Drive Rush (cancel)', nota: 'DR' };
           const g = gate(dr);
@@ -431,7 +444,7 @@
       ev.conn = i ? (ev.via === 'cancel' ? '>' : ',') : '';
     });
     discarded.sort((a, b) => a.f - b.f);
-    return { steps: out, discarded, dirs, air };
+    return { steps: out, discarded, dirs, air, install };
   }
 
   const BTN_TOKENS = 'LP|MP|HP|LK|MK|HK|PP|KK|SP|AUTO|PARRY|TH|DI|P|K|L|M|H';

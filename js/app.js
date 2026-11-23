@@ -382,7 +382,7 @@ $('pasteCode').onclick = () => {
       let v = $('codeIn').value.trim();
       const m = v.match(/[#&]c=([^&]+)/);
       if (m) v = m[1];
-      const o = decode(v);
+      const o = v.startsWith('{') ? JSON.parse(v) : decode(v);
       snapshot();
       if (Array.isArray(o.frames)) loadRec(o, 'Grabación pegada'); else loadPayload(o);
       $('modal').classList.remove('on');

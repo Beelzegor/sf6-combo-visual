@@ -1,0 +1,11 @@
+{
+  "name": "sf6-combo-visual",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Convierte los inputs de tu control en imágenes de combos de Street Fighter 6 al estilo de los combo trials.",
+  "scripts": {
+    "test": "node tests/engine.test.js",
+    "build": "python3 tools/build_single.py"
+  },
+  "license": "MIT"
+}

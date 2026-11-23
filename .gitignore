@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+capture/grabaciones/
+capture/perfiles_control.json
+tests/*.png
+node_modules/
+dist/

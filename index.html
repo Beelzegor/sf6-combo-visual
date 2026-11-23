@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SF6 Combo Visual</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header>
+  <h1>SF6 <span>Combo</span> Visual</h1>
+  <label class="tag">Personaje <select id="charSel" class="hsel"></select></label>
+  <div class="seg" id="schemeSeg"><button data-v="classic" class="on">Clásico</button><button data-v="modern">Moderno</button></div>
+  <span class="tag" id="hdrSide">Lado: <b>P1</b></span>
+</header>
+
+<main>
+<aside>
+  <section class="card">
+    <h2><span class="n">1</span> Captura</h2>
+    <div class="status"><span class="dot" id="gpDot"></span><span id="gpName">Sin control detectado: pulsa cualquier botón del control</span></div>
+    <div class="live" id="live" style="margin:10px 0"></div>
+    <label class="f">Lado al empezar el combo</label>
+    <div class="row" style="margin-bottom:10px">
+      <div class="seg" id="sideSeg"><button data-v="P1" class="on">P1 (mira a la derecha)</button><button data-v="P2">P2 (izquierda)</button></div>
+    </div>
+    <div class="recbar">
+      <button class="btn pri" id="recBtn">● Grabar</button>
+      <span class="timer" id="timer">0 frames</span>
+    </div>
+    <div class="bridge">
+      <div class="status"><span class="dot" id="brDot"></span><b>Capturador local</b> <span class="muted" id="brStatus">desconectado</span></div>
+      <div class="row" style="margin-top:6px"><input type="text" id="brPort" value="8765" style="width:80px" title="Puerto"><button class="btn sm" id="brBtn">Conectar</button><span class="muted" id="brInfo"></span></div>
+      <p class="muted" style="margin:6px 0 0">Ejecuta <code>capture/sf6_capture.py</code> para grabar con el juego en primer plano. Al conectar, el botón Grabar de tu control y el de esta página controlan la misma grabación.</p>
+    </div>
+    <p class="muted" style="margin:8px 0 0">Grabar y detener: <kbd>Enter</kbd> o el botón asignado a <b>Grabar</b> en tu perfil. Sin control puedes probar con el teclado (por defecto <kbd>W A S D</kbd>, <kbd>U I O</kbd> puños, <kbd>J K L</kbd> patadas).</p>
+  </section>
+  <section class="card">
+    <h2>Perfiles de control</h2>
+    <div class="row"><select id="profSel" style="flex:1"></select></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn sm" id="profNew">Nuevo</button><button class="btn sm" id="profDup">Duplicar</button><button class="btn sm" id="profRen">Renombrar</button><button class="btn sm" id="profDel">Eliminar</button><button class="btn sm" id="profExp">Exportar</button><button class="btn sm" id="profImp">Importar</button>
+    </div>
+    <div class="map" id="map" style="margin-top:12px"></div>
+    <p class="muted">Haz clic en una casilla y pulsa el botón del control o la tecla (Esc cancela). Los atajos de Parry, Impact, agarre y OD sirven si los tienes asignados a un solo botón en el juego. Las direcciones se leen solas de la cruceta, el stick izquierdo o el hat; asígnalas solo si tu stick o hitbox las manda como botones.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span> Otras fuentes</h2>
+    <div class="col">
+      <label class="f">Grabación del capturador (.json)</label>
+      <input type="file" id="fileRec" accept=".json,application/json">
+      <label class="f" style="margin-top:6px">Grabaciones de prueba con ruido</label>
+      <div class="row"><select id="demoSel" style="flex:1"></select><button class="btn" id="demoBtn">Cargar</button></div>
+      <div id="demoCheck" class="muted"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Iconos</h2>
+    <p class="muted" style="margin-top:0">Se usa tu paquete de iconos de SF6. Para reemplazar uno, carga un PNG o SVG con su clave como nombre: <b>1</b> a <b>9</b> (numpad, la <b>6</b> es adelante), <b>LP MP HP LK MK HK</b>, <b>P K</b>, <b>PLUS</b>.</p>
+    <label style="display:block;margin-bottom:8px"><input type="checkbox" id="usePack"> Usar el paquete de iconos de SF6</label>
+    <div class="row"><input type="file" id="iconFiles" multiple accept="image/*" style="flex:1"><button class="btn sm" id="iconReset">Restablecer</button></div>
+    <div class="icons" id="iconGrid" style="margin-top:10px"></div>
+  </section>
+</aside>
+
+<section>
+  <section class="card">
+    <div class="row" style="justify-content:space-between;margin-bottom:10px">
+      <h2 style="margin:0"><span class="n">3</span> Combo limpio</h2>
+      <div class="row">
+        <span class="badge" id="srcBadge">Sin grabación</span>
+        <button class="btn sm" id="undoBtn" disabled>Deshacer</button>
+        <button class="btn sm" id="clearBtn">Vaciar</button>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:10px;gap:16px">
+      <label title="Descarta botones pulsados mientras el personaje sigue en la animación del golpe anterior, salvo cancels válidos"><input type="checkbox" id="optTiming" checked> Limpiar con frame data (como el juego)</label>
+      <label title="Si machacas un golpe medio o fuerte, las repeticiones seguidas se unen en un solo paso"><input type="checkbox" id="optMerge" checked> Unir repeticiones por machaqueo</label>
+    </div>
+    <div class="stage" id="stage"><div class="empty">Graba un combo, carga una grabación de prueba o añade movimientos desde la paleta.</div></div>
+    <div class="row" style="margin-top:10px">
+      <div style="flex:1;min-width:240px">
+        <label class="f">Notación (editable: separa con <b>,</b> para link y <b>&gt;</b> para cancel)</label>
+        <textarea id="notaTxt" spellcheck="false"></textarea>
+      </div>
+      <button class="btn" id="notaApply" style="align-self:flex-end">Aplicar texto</button>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Paso seleccionado</h2>
+      <div id="editor"><p class="muted">Haz clic en un paso del combo para editarlo.</p></div>
+    </section>
+    <section class="card">
+      <h2 id="palTitle">Paleta</h2>
+      <div class="palette" id="palette"></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2><span class="n">4</span> Exportar</h2>
+      <div class="editor">
+        <div class="full"><label class="f">Título</label><input type="text" id="title" value="Juri · Combo 1"></div>
+        <div class="full"><label class="f">Subtítulo (opcional)</label><input type="text" id="subtitle" placeholder="Ej.: esquina, 2 barras de Drive, 1 Fuha stock"></div>
+        <div><label class="f">Formato</label><div class="seg" id="fmtSeg"><button data-v="h" class="on">Panel</button><button data-v="v">Vertical 9:16</button></div></div>
+        <div class="col" style="gap:4px">
+          <label><input type="checkbox" id="optNames" checked> Nombres de movimientos</label>
+          <label><input type="checkbox" id="optNota" checked> Notación numérica al pie</label>
+          <label><input type="checkbox" id="optConn"> Etiquetas link / cancel</label>
+          <label><input type="checkbox" id="optHl"> Resaltar el paso seleccionado</label>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn pri" id="pngBtn">Generar PNG</button>
+        <button class="btn" id="copyTxt">Copiar texto</button>
+        <button class="btn" id="copyCode">Copiar código</button>
+        <button class="btn" id="pasteCode">Importar código o enlace</button>
+      </div>
+      <div style="margin-top:14px">
+        <label class="f">Enlace para compartir (abre el combo tal cual)</label>
+        <div class="row"><input type="text" id="shareURL" readonly style="flex:1"><button class="btn sm" id="copyLink">Copiar enlace</button></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn sm" id="copyOverlay" title="Fuente de navegador para OBS que muestra este combo y marca el avance">Overlay OBS: este combo</button>
+          <button class="btn sm" id="copyOverlayLive" title="Fuente de navegador para OBS que muestra los movimientos limpios en vivo">Overlay OBS: inputs en vivo</button>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Inputs crudos <span class="badge" id="rawCount">0</span></h2>
+      <div class="raw" id="raw"><div class="empty" style="padding:20px">Aquí verás cada cambio de input con su duración en frames, como el historial del modo entrenamiento. Las filas moradas son pulsaciones nuevas.</div></div>
+      <div class="row" style="margin-top:8px"><button class="btn sm" id="recCopy">Copiar grabación</button><button class="btn sm" id="recSave">Descargar grabación (.json)</button></div>
+      <div class="disc" id="disc"></div>
+    </section>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="modal"><div class="box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+
+<script src="js/util.js"></script>
+<script src="js/iconpack.js"></script>
+<script src="js/engine.js"></script>
+<script src="data/characters/juri.js"></script>
+<script src="data/characters/ken.js"></script>
+<script src="data/characters/guile.js"></script>
+<script src="js/demos.js"></script>
+<script src="js/render.js"></script>
+<script src="js/bridge.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SF6 Combo Visual · Overlay</title>
+<style>
+html,body{margin:0;background:transparent;color:#fff;font:14px "Segoe UI",Arial,sans-serif;overflow:hidden}
+#wrap{padding:10px}
+#wrap svg{display:block;max-width:100%;height:auto}
+#status{position:fixed;left:10px;bottom:8px;font-size:12px;color:#d9c9f5;background:rgba(10,8,16,.7);padding:3px 8px;border-radius:6px}
+#status.hide{display:none}
+#done{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font:900 italic 64px "Arial Black",Arial;color:#fff;text-shadow:0 0 18px #c13cff,0 4px 0 #3b1366}
+#done.on{display:flex}
+</style>
+</head>
+<body>
+<div id="wrap"></div>
+<div id="status">Esperando al capturador...</div>
+<div id="done">¡COMPLETADO!</div>
+<script>
+const store = { get: (k, d) => d, set: () => true };
+</script>
+<script src="js/iconpack.js"></script>
+<script src="js/engine.js"></script>
+<script src="data/characters/juri.js"></script>
+<script src="data/characters/ken.js"></script>
+<script src="data/characters/guile.js"></script>
+<script>
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function decode(s) { s = s.trim().replace(/^SF6CV:/, '').replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(escape(atob(s)))); }
+</script>
+<script src="js/render.js"></script>
+<script src="js/bridge.js"></script>
+<script src="js/overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+:root{
+  --bg:#0d0b12; --panel:#16131f; --panel2:#1d1929; --line:#2c2640; --txt:#ece8f5; --mut:#9a92b0;
+  --acc:#c13cff; --acc2:#ff3d8b; --ok:#3ddc97; --warn:#ffb020; --bad:#ff4d5e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#1a0f26,#0d0b12 70%)}
+header h1{margin:0;font:900 20px/1 "Arial Black",Impact,sans-serif;letter-spacing:.5px;text-transform:uppercase}
+header h1 span{color:var(--acc)}
+.tag{font-size:12px;padding:3px 9px;border:1px solid var(--line);border-radius:99px;color:var(--mut)}
+.tag b{color:var(--txt)}
+main{display:grid;grid-template-columns:330px 1fr;gap:16px;padding:16px 20px 40px;max-width:1500px;margin:0 auto}
+@media (max-width:1000px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);display:flex;align-items:center;gap:8px}
+.card h2 .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:8px}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;transition:.12s}
+.btn:hover{border-color:var(--acc)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btn.rec{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
+.btn.sm{padding:4px 8px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:6px 14px;cursor:pointer;color:var(--mut)}
+.seg button.on{background:var(--acc);color:#fff}
+input[type=text],select,textarea{background:#0f0d16;border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
+textarea{resize:vertical;min-height:58px;font-family:Consolas,"Cascadia Mono",monospace}
+label.f{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
+.muted{color:var(--mut);font-size:12px}
+.status{display:flex;align-items:center;gap:8px;font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--bad);flex:none}
+.dot.on{background:var(--ok)}
+.live{display:flex;align-items:center;gap:6px;min-height:46px;padding:6px 10px;background:#0f0d16;border-radius:10px;border:1px solid var(--line)}
+.live svg{display:block}
+.recbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.timer{font:700 13px Consolas,monospace;color:var(--mut)}
+.map{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) auto;gap:5px 6px;align-items:center;font-size:12.5px}
+.slotbtn{background:#0f0d16;border:1px solid var(--line);border-radius:7px;padding:5px 6px;cursor:pointer;font:12px Consolas,monospace;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slotbtn:hover{border-color:var(--acc)}
+.slotbtn.wait{border-color:var(--warn);color:var(--warn)}
+.map .k{font-weight:700}
+.map .v{color:var(--mut);font-family:Consolas,monospace;font-size:12px}
+.map .wait{color:var(--warn)}
+details summary{cursor:pointer;color:var(--mut);font-size:13px;margin:4px 0}
+.stage{background:#08070c;border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;min-height:170px}
+.stage svg .step{cursor:pointer}
+.empty{color:var(--mut);text-align:center;padding:50px 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:1250px){.grid2{grid-template-columns:1fr}}
+.raw{max-height:340px;overflow:auto;font:12px Consolas,monospace;background:#0f0d16;border-radius:8px;border:1px solid var(--line)}
+.raw .r{display:grid;grid-template-columns:44px 30px 1fr;align-items:center;gap:6px;padding:2px 8px;border-bottom:1px solid #1a1724}
+.raw .r.p{background:#24123a}
+.raw .r .fc{color:var(--mut);text-align:right}
+.raw .chips{display:flex;gap:3px}
+.disc{font-size:12px;color:var(--mut);margin-top:8px}
+.disc li{margin:2px 0}
+.palette{display:flex;flex-direction:column;gap:10px}
+.palette .grp{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.palette .grp b{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;width:100%}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;cursor:pointer;font-size:12px;font-family:Consolas,monospace}
+.chip:hover{border-color:var(--acc)}
+.chip.sp{border-color:#4a2a63}
+.chip.sa{border-color:#6b2340}
+.editor{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.editor .full{grid-column:1/-1}
+.badge{font-size:11px;padding:2px 7px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--mut)}
+.ok{color:var(--ok)} .bad{color:var(--bad)}
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.icons div{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mut);background:#0f0d16;border-radius:8px;padding:5px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:9;padding:20px}
+.modal.on{display:flex}
+.modal .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;max-width:95vw;max-height:92vh;overflow:auto}
+.modal img{max-width:100%;display:block;border-radius:8px;margin:10px 0}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;padding:8px 16px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:10}
+.toast.on{opacity:1}
+kbd{background:#0f0d16;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px}
+
+.hsel{background:transparent;border:0;color:var(--txt);font-weight:700;padding:0 2px;width:auto}
+.hsel option{background:var(--panel)}
+.bridge{margin-top:12px;padding:10px;border:1px dashed var(--line);border-radius:10px}
+code{font-family:Consolas,monospace;font-size:12px;background:#0f0d16;padding:1px 4px;border-radius:4px}

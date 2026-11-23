@@ -127,7 +127,7 @@
     autoRetry: true,
     status(state, text) {
       if (state === 'on') { statusEl.classList.add('hide'); return; }
-      if (padSeen) return;
+      if (padSeen || peerOn) return;
       statusEl.textContent = 'Pulsa cualquier botón del control (o abre el capturador)';
       statusEl.classList.remove('hide');
     },
@@ -158,6 +158,7 @@
     };
     connect();
   }
+  window.__overlay = { frames: () => frameN, steps: () => recSteps.map(x => x.nota), progress: () => progress, peer: () => peerOn };
   setInterval(pollPad, 4);
   (function raf() { pollPad(); requestAnimationFrame(raf); })();
   draw();

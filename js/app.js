@@ -253,17 +253,16 @@ function showLive(d, m, src) {
 }
 const pollStats = { gaps: [], last: 0, shown: 0 };
 function trackPoll(now) {
-  if (pollStats.last) pollStats.gaps.push(now - pollStats.last);
+  if (pollStats.last) { const gap = now - pollStats.last; if (gap > 8) pollStats.gaps.push([now, gap]); }
   pollStats.last = now;
-  if (pollStats.gaps.length > 400) pollStats.gaps.splice(0, pollStats.gaps.length - 400);
+  pollStats.gaps = pollStats.gaps.filter(x => now - x[0] < 30000);
   if (now - pollStats.shown > 1000) {
     pollStats.shown = now;
-    const g = pollStats.gaps.slice(-250);
-    const max = g.length ? Math.max(...g) : 0;
+    const max = pollStats.gaps.reduce((m, x) => Math.max(m, x[1]), 0);
     const el = $('pollInfo');
     if (el) {
       const bad = max > 20;
-      el.textContent = 'Lectura del control: pausa máxima ' + Math.round(max) + ' ms' + (bad ? ' (puede perder pulsaciones cortas)' : ' (bien)');
+      el.textContent = 'Lectura del control (últimos 30 s): pausa máxima ' + Math.round(max) + ' ms' + (bad ? ' (puede perder pulsaciones cortas)' : ' (bien)');
       el.style.color = bad ? '#ffb020' : '#3ddc97';
     }
     if (typeof relay !== 'undefined' && relay.on) relay.stats && relay.stats(max);

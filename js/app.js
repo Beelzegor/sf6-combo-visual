@@ -256,6 +256,7 @@ function poll() {
   const st = readState();
   const s = { d: st.d, m: app.scheme === 'modern' ? st.mm : st.m };
   if (!bridge.connected) showLive(s.d, s.m, 'en vivo');
+  if (typeof relay !== 'undefined') relay.push(s.d, s.m);
   if (gp.recording && !bridge.connected) {
     if (gp.lastPoll && now - gp.lastPoll > gp.maxGap) gp.maxGap = now - gp.lastPoll;
     const idx = Math.floor((now - gp.t0) / (1000 / 60));
@@ -303,6 +304,7 @@ function loadRec(rec, source) {
 
 function setSide(v, silent) {
   app.side = v;
+  if (typeof relay !== 'undefined') relay.info();
   $('sideSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
   lastLive = '';
   if (!silent) reparse();
@@ -374,7 +376,7 @@ function loadPayload(o) {
 function baseURL() { return location.href.split('#')[0].replace(/[^/]*$/, ''); }
 function shareURL() { return baseURL() + 'index.html#c=' + encode(comboPayload()); }
 function padPayload() { return encode({ sc: app.scheme, pad: P().pad }); }
-function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&side=' + app.side + '&pad=' + padPayload() + '&c=' + encode(comboPayload()); }
+function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&side=' + app.side + '&peer=' + relayId() + '&pad=' + padPayload() + '&c=' + encode(comboPayload()); }
 function updateShare() {
   if (!$('shareURL')) return;
   $('shareURL').value = app.steps.length ? shareURL() : '';
@@ -389,7 +391,15 @@ $('openOverlayWin').onclick = () => {
   if (w) { modal('<h3 style="margin-top:0">Overlay abierto en otra ventana</h3><p>En OBS: <b>Captura de ventana</b> de esa ventana, filtro <b>Clave de color</b> en verde (no Clave cromática, que apaga los amarillos) y recorta la barra de direcciones con <b>Alt + arrastrar</b> el borde superior. No minimices la ventana; puede quedar detrás del juego.</p>'); return; }
   modal('<h3 style="margin-top:0">El navegador no dejó abrir la ventana</h3><p>Puede que el bloqueador de ventanas emergentes la haya frenado. Permite las ventanas emergentes para esta página (icono en la barra de direcciones) y vuelve a pulsar el botón, o copia este enlace y ábrelo en una ventana nueva (Ctrl+N):</p><textarea style="width:600px;max-width:85vw;height:90px" readonly>' + esc(url) + '</textarea>');
 };
-$('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&pad=' + padPayload());
+$('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&peer=' + relayId() + '&pad=' + padPayload());
+const relay = createRelaySender((text, ok) => {
+  $('rlStatus').textContent = text;
+  $('rlDot').className = 'dot' + (ok ? ' on' : '');
+  $('rlBtn').textContent = relay && relay.on ? 'Dejar de enviar' : 'Enviar inputs a OBS';
+  store.set('relayOn', !!(relay && relay.on));
+});
+$('rlBtn').onclick = () => relay.toggle();
+if (store.get('relayOn', false)) setTimeout(() => relay.start(), 300);
 $('copyCode').onclick = () => copy('SF6CV:' + encode(comboPayload()));
 $('pasteCode').onclick = () => {
   modal('<h3 style="margin-top:0">Importar código o enlace</h3><textarea id="codeIn" style="width:600px;max-width:85vw;height:110px" placeholder="SF6CV:... o un enlace con #c="></textarea><div class="row" style="margin-top:8px"><button class="btn pri" id="codeGo">Importar</button></div>');

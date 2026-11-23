@@ -109,8 +109,9 @@
   }
   let padSeen = false, lastIdx = -1, cur = { d: 5, m: 0 };
   const t0 = performance.now();
+  let peerOn = false;
   function pollPad() {
-    if (bridge.connected) return;
+    if (bridge.connected || peerOn) return;
     const st = readPad();
     if (st) {
       cur = st;
@@ -133,6 +134,30 @@
     info(msg) { if (!q.side && msg.side) side = msg.side; },
     f(msg) { onFrame(msg.d, msg.m); }
   });
+  if (q.peer && typeof Peer !== 'undefined') {
+    let peer = null, conn = null, lastN = -1;
+    const connect = () => {
+      if (!peer || peer.destroyed) {
+        peer = new Peer();
+        peer.on('open', () => connect());
+        peer.on('error', e => { if (e && e.type === 'peer-unavailable') { statusEl.textContent = 'Esperando a la página de SF6 Combo Visual (pulsa "Enviar inputs a OBS")'; statusEl.classList.remove('hide'); setTimeout(connect, 3000); } });
+        peer.on('disconnected', () => setTimeout(() => { try { peer.reconnect(); } catch (e) { } }, 2000));
+        return;
+      }
+      if (!peer.open) return;
+      conn = peer.connect(q.peer);
+      conn.on('open', () => { peerOn = true; statusEl.textContent = 'Recibiendo inputs de la página'; setTimeout(() => statusEl.classList.add('hide'), 3000); });
+      conn.on('data', msg => {
+        if (msg.t === 'info') { if (!q.side && msg.side) side = msg.side; return; }
+        if (msg.t !== 'f') return;
+        if (lastN >= 0 && msg.n > lastN + 1) for (let k = lastN + 1; k < msg.n; k++) onFrame(msg.d, msg.m);
+        lastN = msg.n;
+        onFrame(msg.d, msg.m);
+      });
+      conn.on('close', () => { peerOn = false; lastN = -1; statusEl.textContent = 'Se perdió la conexión con la página; reintentando...'; statusEl.classList.remove('hide'); setTimeout(connect, 2000); });
+    };
+    connect();
+  }
   setInterval(pollPad, 4);
   (function raf() { pollPad(); requestAnimationFrame(raf); })();
   draw();

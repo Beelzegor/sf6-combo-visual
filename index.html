@@ -29,6 +29,11 @@
       <span class="timer" id="timer">0 frames</span>
     </div>
     <div class="bridge">
+      <div class="status"><span class="dot" id="rlDot"></span><b>Overlay de OBS</b> <span class="muted" id="rlStatus">Apagado</span></div>
+      <div class="row" style="margin-top:6px"><button class="btn sm pri" id="rlBtn">Enviar inputs a OBS</button></div>
+      <p class="muted" style="margin:6px 0 0">Esta página lee tu control (déjala sin minimizar, con el juego encima) y lo envía a la fuente de navegador de OBS, que queda transparente. Sin descargas. Copia el enlace del overlay en "Exportar".</p>
+    </div>
+    <div class="bridge">
       <div class="status"><span class="dot" id="brDot"></span><b>Capturador local</b> <span class="muted" id="brStatus">desconectado</span></div>
       <div class="row" style="margin-top:6px"><input type="text" id="brPort" value="8765" style="width:80px" title="Puerto"><button class="btn sm" id="brBtn">Conectar</button><span class="muted" id="brInfo"></span></div>
       <p class="muted" style="margin:6px 0 0">Ejecuta <code>capture/sf6_capture.py</code> para grabar con el juego en primer plano. Al conectar, el botón Grabar de tu control y el de esta página controlan la misma grabación.</p>
@@ -154,6 +159,8 @@
 <script src="js/demos.js"></script>
 <script src="js/render.js"></script>
 <script src="js/bridge.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="js/relay.js"></script>
 <script src="js/controls.js"></script>
 <script src="js/app.js"></script>
 </body>

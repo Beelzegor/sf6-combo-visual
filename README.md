@@ -2,6 +2,8 @@
 
 Convierte lo que haces con tu control en una imagen limpia de tu combo de **Street Fighter 6**, con el mismo estilo de franjas de los combo trials del juego. Está pensado para creadores de contenido y para cualquiera que quiera compartir sus combos sin depender de notaciones como `236LK` o `qcb+K`.
 
+**Úsalo aquí:** https://beelzegor.github.io/sf6-combo-visual/
+
 ## Qué hace
 
 - **Graba tus inputs** desde el control (o el teclado) y los **limpia como lo haría el juego**:
@@ -31,7 +33,7 @@ Cada personaje es un archivo en `data/characters/`. Añadir uno nuevo es copiar 
 
 ## Uso rápido
 
-1. Abre la web (GitHub Pages) o `index.html` directamente en Chrome o Edge.
+1. Abre [la web](https://beelzegor.github.io/sf6-combo-visual/) o `index.html` directamente en Chrome o Edge.
 2. Elige personaje y esquema (clásico o moderno) arriba.
 3. Pulsa **Grabar**, haz el combo y vuelve a pulsar. El combo limpio aparece al momento.
 4. Ajusta lo que quieras y exporta con **Generar PNG** o **Copiar enlace**.

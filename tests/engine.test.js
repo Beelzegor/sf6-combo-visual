@@ -43,6 +43,12 @@ const fixtures = [
     name: 'Mismo trial, SA2 con la primera media vuelta incompleta (2, 1, neutral, 2, 1, 4)',
     checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
     minSteps: 30
+  },
+  {
+    file: 'juri_fse_trial_3loops.json', char: 'juri',
+    name: 'Mismo trial con una vuelta extra de Saihasho (tres en lugar de dos)',
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    minSteps: 30
   }
 ];
 let fok = 0;
@@ -56,5 +62,12 @@ for (const fx of fixtures) {
   if (pass) fok++;
   console.log((pass ? 'OK  ' : 'FAIL') + ' [fixture] ' + fx.name + ': ' + notas.length + ' pasos, ' + i + '/' + fx.checkpoints.length + ' checkpoints');
 }
-console.log(ok + '/' + cases.length + ' casos, ' + fok + '/' + fixtures.length + ' grabaciones reales');
-process.exit(ok === cases.length && fok === fixtures.length ? 0 : 1);
+const notasDe = f => SF6.parse(JSON.parse(require('fs').readFileSync(__dirname + '/fixtures/' + f, 'utf8')), { char: 'juri', side: 'P1' }).steps.map(s => s.nota + s.conn);
+const dos = notasDe('juri_fse_trial_2.json'), tres = notasDe('juri_fse_trial_3loops.json');
+const i = tres.findIndex((n, k) => n === '2MK,' && tres[k + 1] === '2MP>' && tres[k + 2] === '236LK>');
+const sinVuelta = i >= 0 ? tres.slice(0, i).concat(tres.slice(i + 3)) : tres;
+const igual = JSON.stringify(sinVuelta) === JSON.stringify(dos);
+console.log((igual ? 'OK  ' : 'FAIL') + ' [fixture] La vuelta extra solo añade un "2MK, 2MP > 236LK" y el resto es idéntico');
+if (igual) fok++;
+console.log(ok + '/' + cases.length + ' casos, ' + fok + '/' + (fixtures.length + 1) + ' grabaciones reales');
+process.exit(ok === cases.length && fok === fixtures.length + 1 ? 0 : 1);

@@ -247,6 +247,7 @@
     function push(ev) { ev.id = 'e' + events.length + '_' + ev.f; events.push(ev); return ev; }
     function accept(ev, g) {
       ev.at = g.at; ev.via = g.via;
+      if (g.fd) ev.freeAt = ev.at + g.fd.t + g.fd.hs;
       if (ev.tcPrev) { const p = ev.tcPrev; p.kind = 'tc'; p.tcName = ev.tcName; p.tcStep = 0; p.tcKey = 'TC:' + ev.tcName + ':0'; p.name = ev.tcName + ' (1)'; delete ev.tcPrev; }
       push(ev);
       const fd = g.fd || null;
@@ -430,13 +431,24 @@
     let out = events;
     if (o.merge) {
       out = [];
+      let dropped = false;
       for (const ev of events) {
         const p = out[out.length - 1];
         const light = /(LP|LK|L)$/.test(ev.nota) && !/AUTO/.test(ev.nota);
-        if (p && p.nota === ev.nota && ev.via === 'free' && !light && p.mash && p.mash[ev.nota] && ['normal', 'unique', 'special', 'super'].includes(ev.kind)) {
+        const mashed = p && p.mash ? (p.mash[ev.nota] || 0) : 0;
+        if (p && p.nota === ev.nota && ev.via === 'free' && mashed >= (light ? 2 : 1) && ['normal', 'unique', 'special', 'super'].includes(ev.kind)) {
           discarded.push({ f: ev.f, what: ev.nota, reason: 'Repetición por machaqueo (unida al paso anterior)' });
           continue;
         }
+        const evBtn = (ev.nota.match(/(LP|MP|HP|LK|MK|HK)$/) || [])[1];
+        const sameButton = evBtn && (p ? p.nota.replace(/^j\./, '').split(/[^A-Z]+/).join('+').includes(evBtn) : false);
+        if (p && p.nota !== ev.nota && sameButton && ev.via === 'free' && mashed >= 2 && p.freeAt && ev.f <= p.freeAt + 6 && ['normal', 'unique'].includes(ev.kind)) {
+          discarded.push({ f: ev.f, what: ev.nota, reason: 'Machaqueo del mismo botón que cayó justo al terminar ' + (p.name || p.nota) });
+          dropped = true;
+          continue;
+        }
+        if (dropped && ev.via === 'cancel') ev.via = 'free';
+        dropped = false;
         out.push(ev);
       }
     }

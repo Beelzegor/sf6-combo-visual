@@ -38,7 +38,9 @@ Cada personaje es un archivo en `data/characters/`. Añadir uno nuevo es copiar 
 3. Pulsa **Grabar**, haz el combo y vuelve a pulsar. El combo limpio aparece al momento.
 4. Ajusta lo que quieras y exporta con **Generar PNG** o **Copiar enlace**.
 
-> El navegador solo lee el control mientras la página está en primer plano. Para grabar con el juego abierto usa el capturador.
+> **Con el juego en pantalla completa:** deja la página abierta sin minimizar y pon el juego encima; el control se sigue leyendo (probado en Firefox con SF6 en pantalla completa). Si minimizas la página, el navegador deja de entregar los inputs.
+>
+> El capturador es opcional: hace falta para el overlay de OBS en vivo o si prefieres no tener la página abierta.
 
 ## Capturador (para grabar con SF6 abierto)
 

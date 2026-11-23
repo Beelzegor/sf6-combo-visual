@@ -251,22 +251,27 @@ function showLive(d, m, src) {
   const rel = app.side === 'P2' ? SF6.MIRROR[d] : d;
   $('live').innerHTML = smallIcon(String(rel), 34) + maskButtons(m, app.scheme).map(b => smallIcon(b, 34)).join('') + '<span class="muted" style="margin-left:auto">' + src + '</span>';
 }
-function loop() {
+function poll() {
+  const now = performance.now();
   const st = readState();
   const s = { d: st.d, m: app.scheme === 'modern' ? st.mm : st.m };
   if (!bridge.connected) showLive(s.d, s.m, 'en vivo');
   if (gp.recording && !bridge.connected) {
-    const idx = Math.floor((performance.now() - gp.t0) / (1000 / 60));
+    if (gp.lastPoll && now - gp.lastPoll > gp.maxGap) gp.maxGap = now - gp.lastPoll;
+    const idx = Math.floor((now - gp.t0) / (1000 / 60));
     while (gp.frames.length <= idx) gp.frames.push([s.d, s.m]);
     $('timer').textContent = gp.frames.length + ' frames · ' + (gp.frames.length / 60).toFixed(1) + ' s';
   }
-  requestAnimationFrame(loop);
+  gp.lastPoll = now;
 }
+function loop() { poll(); requestAnimationFrame(loop); }
+setInterval(poll, 4);
+document.addEventListener('visibilitychange', () => { if (document.hidden && gp.recording) gp.wentHidden = true; });
 
 function toggleRec() {
   if (bridge.connected) { bridge.send({ t: 'toggle' }); return; }
   if (!gp.recording) {
-    gp.recording = true; gp.frames = []; gp.t0 = performance.now();
+    gp.recording = true; gp.frames = []; gp.t0 = performance.now(); gp.maxGap = 0; gp.lastPoll = 0; gp.wentHidden = false;
     recUI(true);
   } else {
     gp.recording = false;
@@ -274,6 +279,8 @@ function toggleRec() {
     const fr = trim(gp.frames);
     if (fr.length < 2) { toast('No se detectaron inputs en la grabación'); return; }
     loadRec({ version: 2, fps: 60, scheme: app.scheme, char: app.char, side: app.side, frames: fr }, 'Grabación en vivo');
+    if (gp.wentHidden) modal('<h3 style="margin-top:0">La página se ocultó durante la grabación</h3><p>Parece que minimizaste la ventana. Mientras está minimizada el navegador no entrega los inputs del control, así que puede faltar parte del combo. Deja la página abierta sin minimizar y pon el juego encima.</p>');
+    else if (gp.maxGap > 40) toast('Aviso: el navegador leyó el control con pausas de hasta ' + Math.round(gp.maxGap) + ' ms; puede faltar algún input');
   }
 }
 function trim(frames) {

@@ -381,7 +381,14 @@ function updateShare() {
 }
 $('copyLink').onclick = () => { if (!app.steps.length) { toast('No hay pasos para compartir'); return; } copy(shareURL()); };
 $('copyOverlay').onclick = () => { if (!app.steps.length) { toast('Primero arma el combo'); return; } copy(overlayURL('trial')); };
-$('openOverlayWin').onclick = () => { if (!app.steps.length) { toast('Primero arma el combo'); return; } window.open(overlayURL('trial') + '&bg=green', '_blank'); };
+$('openOverlayWin').onclick = () => {
+  if (!app.steps.length) { toast('Primero arma el combo'); return; }
+  const url = overlayURL('trial') + '&bg=green';
+  let w = null;
+  try { w = window.open(url, 'sf6overlay', 'popup=yes,width=960,height=900'); } catch (e) { w = null; }
+  if (w) { toast('Overlay abierto en una ventana aparte'); return; }
+  modal('<h3 style="margin-top:0">El navegador no dejó abrir la ventana</h3><p>Puede que el bloqueador de ventanas emergentes la haya frenado. Permite las ventanas emergentes para esta página (icono en la barra de direcciones) y vuelve a pulsar el botón, o copia este enlace y ábrelo en una ventana nueva (Ctrl+N):</p><textarea style="width:600px;max-width:85vw;height:90px" readonly>' + esc(url) + '</textarea>');
+};
 $('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&pad=' + padPayload());
 $('copyCode').onclick = () => copy('SF6CV:' + encode(comboPayload()));
 $('pasteCode').onclick = () => {

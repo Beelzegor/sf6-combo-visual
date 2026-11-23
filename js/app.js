@@ -251,8 +251,27 @@ function showLive(d, m, src) {
   const rel = app.side === 'P2' ? SF6.MIRROR[d] : d;
   $('live').innerHTML = smallIcon(String(rel), 34) + maskButtons(m, app.scheme).map(b => smallIcon(b, 34)).join('') + '<span class="muted" style="margin-left:auto">' + src + '</span>';
 }
+const pollStats = { gaps: [], last: 0, shown: 0 };
+function trackPoll(now) {
+  if (pollStats.last) pollStats.gaps.push(now - pollStats.last);
+  pollStats.last = now;
+  if (pollStats.gaps.length > 400) pollStats.gaps.splice(0, pollStats.gaps.length - 400);
+  if (now - pollStats.shown > 1000) {
+    pollStats.shown = now;
+    const g = pollStats.gaps.slice(-250);
+    const max = g.length ? Math.max(...g) : 0;
+    const el = $('pollInfo');
+    if (el) {
+      const bad = max > 20;
+      el.textContent = 'Lectura del control: pausa máxima ' + Math.round(max) + ' ms' + (bad ? ' (puede perder pulsaciones cortas)' : ' (bien)');
+      el.style.color = bad ? '#ffb020' : '#3ddc97';
+    }
+    if (typeof relay !== 'undefined' && relay.on) relay.stats && relay.stats(max);
+  }
+}
 function poll() {
   const now = performance.now();
+  trackPoll(now);
   const st = readState();
   const s = { d: st.d, m: app.scheme === 'modern' ? st.mm : st.m };
   if (!bridge.connected) showLive(s.d, s.m, 'en vivo');

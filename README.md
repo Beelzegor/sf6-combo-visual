@@ -65,7 +65,8 @@ Opciones: `--puerto 9000`, `--lado 2`.
 
 1. Arma tu combo en la web y pulsa **Overlay OBS: este combo** (o **inputs en vivo**). Se copia un enlace.
 2. En OBS añade una fuente **Navegador** con ese enlace. Ancho recomendado: 920 px.
-3. Deja abierto el capturador: el overlay se conecta solo.
+3. Pulsa cualquier botón del control: la fuente de navegador de OBS lee el control directamente aunque el juego esté en primer plano, con los botones del perfil que tenías al copiar el enlace. No hace falta descargar nada.
+4. Opcional: si abres el capturador, el overlay lo usa en lugar de leer el control.
 
 Parámetros del enlace: `w` (ancho), `port`, `side` (`P1` o `P2`), `n` (pasos visibles en modo en vivo), `bg=1` (con fondo).
 

@@ -373,14 +373,15 @@ function loadPayload(o) {
 }
 function baseURL() { return location.href.split('#')[0].replace(/[^/]*$/, ''); }
 function shareURL() { return baseURL() + 'index.html#c=' + encode(comboPayload()); }
-function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&c=' + encode(comboPayload()); }
+function padPayload() { return encode({ sc: app.scheme, pad: P().pad }); }
+function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&side=' + app.side + '&pad=' + padPayload() + '&c=' + encode(comboPayload()); }
 function updateShare() {
   if (!$('shareURL')) return;
   $('shareURL').value = app.steps.length ? shareURL() : '';
 }
 $('copyLink').onclick = () => { if (!app.steps.length) { toast('No hay pasos para compartir'); return; } copy(shareURL()); };
 $('copyOverlay').onclick = () => { if (!app.steps.length) { toast('Primero arma el combo'); return; } copy(overlayURL('trial')); };
-$('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side);
+$('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&pad=' + padPayload());
 $('copyCode').onclick = () => copy('SF6CV:' + encode(comboPayload()));
 $('pasteCode').onclick = () => {
   modal('<h3 style="margin-top:0">Importar código o enlace</h3><textarea id="codeIn" style="width:600px;max-width:85vw;height:110px" placeholder="SF6CV:... o un enlace con #c="></textarea><div class="row" style="margin-top:8px"><button class="btn pri" id="codeGo">Importar</button></div>');

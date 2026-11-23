@@ -244,7 +244,7 @@
       if (canCancel && (cur.fd.c || '').includes('n')) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
       const free = cur.at + cur.fd.t + cur.fd.hs;
       const evBtn = (ev.nota.match(/(LP|MP|HP|LK|MK|HK|L|M|H)$/) || [])[1];
-      const slack = evBtn && !cur.ev.nota.includes(evBtn) ? LINK_SLACK : 0;
+      const slack = (ev.nota === cur.ev.nota || (['special', 'super'].includes(cur.ev.kind) && evBtn && cur.ev.nota.includes(evBtn))) ? 0 : LINK_SLACK;
       if (ev.f >= free - BUFFER - slack && ev.nota !== 'DR') return { ok: true, at: Math.max(ev.f, free - BUFFER - slack), via: 'free', fd };
       if (canCancel) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
       return { ok: false, reason: 'Pulsado durante la animación de ' + (cur.ev.name || cur.ev.nota) };
@@ -448,7 +448,7 @@
         }
         const evBtn = (ev.nota.match(/(LP|MP|HP|LK|MK|HK)$/) || [])[1];
         const sameButton = evBtn && (p ? p.nota.replace(/^j\./, '').split(/[^A-Z]+/).join('+').includes(evBtn) : false);
-        if (p && p.nota !== ev.nota && sameButton && ev.via === 'free' && mashed >= 2 && p.freeAt && ev.f <= p.freeAt + 6 && ['normal', 'unique'].includes(ev.kind)) {
+        if (p && p.nota !== ev.nota && ['special', 'super'].includes(p.kind) && sameButton && ev.via === 'free' && mashed >= 2 && p.freeAt && ev.f <= p.freeAt + 6 && ['normal', 'unique'].includes(ev.kind)) {
           discarded.push({ f: ev.f, what: ev.nota, reason: 'Machaqueo del mismo botón que cayó justo al terminar ' + (p.name || p.nota) });
           dropped = true;
           continue;

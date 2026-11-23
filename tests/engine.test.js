@@ -2,6 +2,9 @@ require('../js/engine.js');
 const SF6 = globalThis.SF6;
 for (const c of ['juri', 'ken', 'guile']) require('../data/characters/' + c + '.js');
 const cases = [
+  ['juri', 'classic', 'P1', '5x6 5+MPx3 5x22 2x1 2+MPx2 2x3 2+MPx3 2x30', ['5MP', '2MP']],
+  ['juri', 'classic', 'P1', '5x6 5+MPx3 5x16 2x1 2+MPx2 2x3 2+MPx2 2x3 2+MPx3 2x30', ['5MP', '2MP']],
+  ['juri', 'classic', 'P1', '5x6 5+MPx3 5x23 2x1 2+MPx3 2x30', ['5MP', '2MP']],
   ['juri', 'classic', 'P1', '5x10 2x2 2+LKx4 2x8 1x1 2x3 2+LPx3 2x2 1x2 4x1 4+LKx4 5x3 5+LKx2 5x9 5+LKx2 5x20', ['2LK', '2LP', '214LK']],
   ['juri', 'classic', 'P1', '5x8 5+MPx3 5x6 4x2 4+HPx3 4x5 5x3 5+HPx4 5x20', ['5MP', '4HP', '5HP']],
   ['juri', 'classic', 'P1', '5x6 5+MPx1 5+MP+MKx3 5x2 6x3 5x2 6x8 5x2 5+HPx3 5x40 2x3 2+MPx3 2x4 3x2 6x2 6+MKx4 5x20', ['PDR', '5HP', '2MP', '236MK']],

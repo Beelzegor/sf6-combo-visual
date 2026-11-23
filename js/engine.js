@@ -27,7 +27,8 @@
   const JUMP_PRE = 4;
   const JUMP_LEN = 38;
   const BUFFER = 4;
-  const HITSTOP = { L: 10, M: 12, H: 14 };
+  const HITSTOP = { L: 9, M: 11, H: 13 };
+  const LINK_SLACK = 2;
 
   const chars = {};
   function registerCharacter(c) { chars[c.id] = c; }
@@ -134,7 +135,7 @@
       for (const d of [6, 4]) {
         if (a.d !== d || c.d !== d || b.d !== 5) continue;
         if (prev && prev.d === d) continue;
-        if (a.end - a.start + 1 > 8 || b.end - b.start + 1 > 8) continue;
+        if (b.end - b.start + 1 > 8) continue;
         if (air[c.start]) continue;
         out.push({ f: c.start, d });
       }
@@ -237,11 +238,15 @@
       }
       if (ev.kind === 'normal' && ev.nota.startsWith('j.') && ev.f < airUsedUntil && !airChain) return { ok: false, reason: 'Solo sale un golpe por salto' };
       if (!cur || !cur.fd) return { ok: true, at: ev.f, via: 'free', fd };
-      const free = cur.at + cur.fd.t + cur.fd.hs;
-      if (ev.f >= free - BUFFER && ev.nota !== 'DR') return { ok: true, at: Math.max(ev.f, free), via: 'free', fd };
       const from = cur.at + cur.fd.s - BUFFER;
       const to = cur.at + cur.fd.s + cur.fd.a + cur.fd.hs + 10;
-      if (ev.f >= from && ev.f <= to && allowedCancel(cur, ev)) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
+      const canCancel = ev.f >= from && ev.f <= to && allowedCancel(cur, ev);
+      if (canCancel && (cur.fd.c || '').includes('n')) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
+      const free = cur.at + cur.fd.t + cur.fd.hs;
+      const evBtn = (ev.nota.match(/(LP|MP|HP|LK|MK|HK|L|M|H)$/) || [])[1];
+      const slack = evBtn && !cur.ev.nota.includes(evBtn) ? LINK_SLACK : 0;
+      if (ev.f >= free - BUFFER - slack && ev.nota !== 'DR') return { ok: true, at: Math.max(ev.f, free - BUFFER - slack), via: 'free', fd };
+      if (canCancel) return { ok: true, at: Math.max(ev.f, cur.at + cur.fd.s), via: 'cancel', fd };
       return { ok: false, reason: 'Pulsado durante la animación de ' + (cur.ev.name || cur.ev.nota) };
     }
     function push(ev) { ev.id = 'e' + events.length + '_' + ev.f; events.push(ev); return ev; }
@@ -435,6 +440,7 @@
       for (const ev of events) {
         const p = out[out.length - 1];
         const light = /(LP|LK|L)$/.test(ev.nota) && !/AUTO/.test(ev.nota);
+        if (dropped && ev.via === 'cancel') ev.via = 'free';
         const mashed = p && p.mash ? (p.mash[ev.nota] || 0) : 0;
         if (p && p.nota === ev.nota && ev.via === 'free' && mashed >= (light ? 2 : 1) && ['normal', 'unique', 'special', 'super'].includes(ev.kind)) {
           discarded.push({ f: ev.f, what: ev.nota, reason: 'Repetición por machaqueo (unida al paso anterior)' });
@@ -447,7 +453,6 @@
           dropped = true;
           continue;
         }
-        if (dropped && ev.via === 'cancel') ev.via = 'free';
         dropped = false;
         out.push(ev);
       }

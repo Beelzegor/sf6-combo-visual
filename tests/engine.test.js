@@ -20,6 +20,8 @@ const cases = [
   ['guile', 'classic', 'P1', '5x6 2+MPx3 2x8 2+MPx3 2x40', ['2MP', '2MP']],
   ['guile', 'classic', 'P1', '5x4 1x45 6x2 4x2 6x2 6+LPx3 5x60', ['[4]646LP']],
   ['juri', 'classic', 'P1', '5x6 6+HPx3 6x30 2x8 1x4 4x14 5x6 2x12 1x5 4x6 4+MPx3 5x40', ['6HP', '214214MP']],
+  ['juri', 'classic', 'P1', '5x6 5+MPx3 5x24 2x1 2+MPx3 2x30', ['5MP', '2MP']],
+  ['juri', 'classic', 'P1', '5x6 6x4 6+HPx3 6x13 5x2 6x10 2x2 2+HPx3 2x40 5x1 5+MPx3 5x24 2x1 2+MPx3 2x4 5x1 6x2 5x2 6x10 2x2 2+HPx3 2x40 5x1 5+MPx3 2x2 3x2 6x1 6+HKx3 5x40', ['6HP', 'DR', '2HP', '5MP', '2MP', 'DR', '2HP', '5MP', '236HK']],
   ['juri', 'modern', 'P1', '5x6 2+Mx3 2x6 5x2 5+SPx3 5x30 4+SP+Hx3 5x20', ['2M', 'SP', '4SP+H']],
   ['juri', 'modern', 'P1', '5x6 5+AUTO+Lx3 5x10 5+AUTO+Lx3 5x20 6+AUTO+SPx3 5x30', ['AUTO+L', 'AUTO+L', '6AUTO+SP']]
 ];

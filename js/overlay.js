@@ -1,6 +1,7 @@
 (() => {
   const q = Object.fromEntries(location.hash.replace(/^#/, '').split('&').filter(Boolean).map(kv => { const i = kv.indexOf('='); return [kv.slice(0, i), decodeURIComponent(kv.slice(i + 1))]; }));
   const mode = q.m === 'live' ? 'live' : 'trial';
+  if (q.bg === 'green') { document.documentElement.style.background = '#00ff00'; document.body.style.background = '#00ff00'; }
   let combo = null;
   if (q.c) { try { combo = decode(q.c); } catch (e) { combo = null; } }
   const charId = (combo && combo.c) || q.ch || 'juri';
@@ -20,7 +21,7 @@
   function draw() {
     if (mode === 'trial') {
       if (!steps.length) { wrap.innerHTML = '<div style="padding:20px;background:rgba(0,0,0,.6)">Falta el combo: copia el enlace desde "Overlay OBS: este combo".</div>'; return; }
-      wrap.innerHTML = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
+      wrap.innerHTML = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1' && q.bg !== 'solid', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
     } else {
       const shown = recSteps.slice(-(+q.n || 6));
       wrap.innerHTML = shown.length ? renderCombo(shown, { tag, names: true, width, header: false, sel: shown.length - 1, nota: false }).svg : '';

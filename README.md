@@ -68,6 +68,12 @@ Opciones: `--puerto 9000`, `--lado 2`.
 3. Pulsa cualquier botón del control: la fuente de navegador de OBS lee el control directamente aunque el juego esté en primer plano, con los botones del perfil que tenías al copiar el enlace. No hace falta descargar nada.
 4. Opcional: si abres el capturador, el overlay lo usa en lugar de leer el control.
 
+**Si la fuente de navegador de OBS no detecta el control** (problema conocido de algunas versiones de OBS):
+
+- Desconecta y vuelve a conectar el control con OBS ya abierto, o ejecuta OBS como administrador. Con controles Bluetooth, prueba por cable.
+- Alternativa sin descargas: pulsa **Abrir overlay en ventana (fondo verde)** en la web. Deja esa ventana sin minimizar (puede quedar detrás del juego), añádela en OBS con **Captura de ventana** y aplícale el filtro **Clave cromática** en verde.
+- O usa el capturador: el overlay lo detecta solo.
+
 Parámetros del enlace: `w` (ancho), `port`, `side` (`P1` o `P2`), `n` (pasos visibles en modo en vivo), `bg=1` (con fondo).
 
 ## Estructura

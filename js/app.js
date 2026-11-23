@@ -381,6 +381,7 @@ function updateShare() {
 }
 $('copyLink').onclick = () => { if (!app.steps.length) { toast('No hay pasos para compartir'); return; } copy(shareURL()); };
 $('copyOverlay').onclick = () => { if (!app.steps.length) { toast('Primero arma el combo'); return; } copy(overlayURL('trial')); };
+$('openOverlayWin').onclick = () => { if (!app.steps.length) { toast('Primero arma el combo'); return; } window.open(overlayURL('trial') + '&bg=green', '_blank'); };
 $('copyOverlayLive').onclick = () => copy(baseURL() + 'overlay.html#m=live&ch=' + app.char + '&sc=' + app.scheme + '&side=' + app.side + '&pad=' + padPayload());
 $('copyCode').onclick = () => copy('SF6CV:' + encode(comboPayload()));
 $('pasteCode').onclick = () => {

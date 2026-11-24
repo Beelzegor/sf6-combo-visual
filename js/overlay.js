@@ -18,10 +18,39 @@
   const MAX = 900;
   const norm = n => SF6.normNota(n);
 
+  let lastShift = 0;
+  function scrollTrial() {
+    const head = wrap.querySelector('.ov-head'), list = wrap.querySelector('.ov-list'), inner = wrap.querySelector('.ov-inner');
+    const svgEl = inner.querySelector('svg');
+    const rows = inner.querySelectorAll('g.step');
+    if (!rows.length) return;
+    const rel = r => r.getBoundingClientRect().top - svgEl.getBoundingClientRect().top;
+    const start = rel(rows[0]);
+    head.style.height = start + 'px';
+    const avail = Math.max(60, window.innerHeight - start - 20);
+    list.style.height = avail + 'px';
+    const top = rel;
+    const total = svgEl.getBoundingClientRect().height - start;
+    const cur = rows[Math.min(progress, rows.length - 1)];
+    const off = Math.max(0, Math.min(top(cur) - start - avail * 0.3, total - avail));
+    const shift = start + (total > avail ? off : 0);
+    if (!scrollTrial.ready) {
+      inner.style.transition = 'none';
+      inner.style.transform = 'translateY(' + (-shift) + 'px)';
+      void inner.offsetHeight;
+      inner.style.transition = '';
+      scrollTrial.ready = true;
+    } else requestAnimationFrame(() => { inner.style.transform = 'translateY(' + (-shift) + 'px)'; });
+    lastShift = shift;
+  }
+  window.addEventListener('resize', () => { if (mode === 'trial') draw(); });
+
   function draw() {
     if (mode === 'trial') {
       if (!steps.length) { wrap.innerHTML = '<div style="padding:20px;background:rgba(0,0,0,.6)">Falta el combo: copia el enlace desde "Overlay OBS: este combo".</div>'; return; }
-      wrap.innerHTML = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1' && q.bg !== 'solid', opaque: q.bg === 'green', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
+      const svg = renderCombo(steps, { tag, names: true, width, header: true, transparent: q.bg !== '1' && q.bg !== 'solid', opaque: q.bg === 'green', title: combo.t || '', subtitle: combo.st || '', sel: progress < steps.length ? progress : -1, done: progress, nota: false }).svg;
+      wrap.innerHTML = '<div class="ov-head">' + svg + '</div><div class="ov-list"><div class="ov-inner" style="transform:translateY(' + (-lastShift) + 'px)">' + svg + '</div></div>';
+      scrollTrial();
     } else {
       const shown = recSteps.slice(-(+q.n || 6));
       wrap.innerHTML = shown.length ? renderCombo(shown, { tag, opaque: q.bg === 'green', names: true, width, header: false, sel: shown.length - 1, nota: false }).svg : '';
@@ -158,7 +187,7 @@
     };
     connect();
   }
-  window.__overlay = { frames: () => frameN, steps: () => recSteps.map(x => x.nota), progress: () => progress, peer: () => peerOn };
+  window.__overlay = { go: n => { progress = n; draw(); }, frames: () => frameN, steps: () => recSteps.map(x => x.nota), progress: () => progress, peer: () => peerOn };
   setInterval(pollPad, 4);
   (function raf() { pollPad(); requestAnimationFrame(raf); })();
   draw();

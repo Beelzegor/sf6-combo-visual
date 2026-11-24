@@ -15,7 +15,7 @@
   const doneEl = document.getElementById('done');
   const buf = [];
   let lastActive = 0, progress = 0, lastParse = 0, frameN = 0, recSteps = [];
-  const MAX = 900;
+  const MAX = 3600;
   const norm = n => SF6.normNota(n);
 
   let lastShift = 0;
@@ -65,12 +65,7 @@
     if (mode !== 'trial') { draw(); return; }
     const got = r.steps.map(s => norm(s.nota));
     const want = steps.map(s => norm(s.nota));
-    let best = 0;
-    for (let k = Math.min(want.length, got.length); k >= 1; k--) {
-      let ok = true;
-      for (let i = 0; i < k; i++) if (got[got.length - k + i] !== want[i]) { ok = false; break; }
-      if (ok) { best = k; break; }
-    }
+    const best = SF6.trialProgress(got, want);
     if (best !== progress) {
       progress = best;
       draw();

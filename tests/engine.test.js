@@ -80,5 +80,39 @@ const sinVuelta = i >= 0 ? tres.slice(0, i).concat(tres.slice(i + 3)) : tres;
 const igual = JSON.stringify(sinVuelta) === JSON.stringify(dos);
 console.log((igual ? 'OK  ' : 'FAIL') + ' [fixture] La vuelta extra solo añade un "2MK, 2MP > 236LK" y el resto es idéntico');
 if (igual) fok++;
-console.log(ok + '/' + cases.length + ' casos, ' + fok + '/' + (fixtures.length + 1) + ' grabaciones reales');
-process.exit(ok === cases.length && fok === fixtures.length + 1 ? 0 : 1);
+const tp = [
+  [['6HP', '214214MP', '6HP'], ['6HP', '214214MP', '6HP', '236LK+HK'], 3, 'avance normal'],
+  [['6HP', '214214MP', '6HP', '5LK', '236LK+HK'], ['6HP', '214214MP', '6HP', '236LK+HK', '2MK'], 4, 'un paso de más no reinicia'],
+  [['6HP', '214214MP', '6HP', '5LK'], ['6HP', '214214MP', '6HP', '236LK+HK'], 3, 'paso suelto al final mantiene el progreso'],
+  [['6HP', '214214MP', '6HP', '2MK', '2MK', '2MK'], ['6HP', '214214MP', '6HP', '236LK+HK'], 0, 'tres pasos fuera del combo sí reinician'],
+  [['6HP', '214214MP', '6HP', '236LK+HK', '2MK', '6HP', '214214MP'], ['6HP', '214214MP', '6HP', '236LK+HK', '2MK'], 2, 'empezar de nuevo cuenta desde el nuevo intento'],
+  [['2MK', '6HP', '214214MP', '6HP'], ['6HP', '214214MP', '6HP', '236LK+HK'], 3, 'el 6HP repetido dentro del combo no confunde']
+];
+let tok = 0;
+for (const [got, want, exp, name] of tp) {
+  const r = SF6.trialProgress(got, want);
+  if (r === exp) tok++;
+  console.log((r === exp ? 'OK  ' : 'FAIL') + ' [overlay] ' + name + ': ' + r + ' (esperado ' + exp + ')');
+}
+for (const fx of ['juri_fse_divekick_od.json', 'juri_fse_trial_3loops.json']) {
+  const rec = JSON.parse(require('fs').readFileSync(__dirname + '/fixtures/' + fx, 'utf8'));
+  const want = SF6.parse(rec, { char: 'juri', side: 'P1' }).steps.map(s => SF6.normNota(s.nota));
+  const buf = [];
+  let prog = 0, back = 0;
+  rec.frames.forEach((fr, i) => {
+    buf.push(fr);
+    if (i % 6) return;
+    const got = SF6.parse({ scheme: 'classic', frames: buf }, { char: 'juri', side: 'P1' }).steps.map(s => SF6.normNota(s.nota));
+    const p = SF6.trialProgress(got, want);
+    if (p < prog) back++;
+    prog = p;
+  });
+  const got = SF6.parse({ scheme: 'classic', frames: buf }, { char: 'juri', side: 'P1' }).steps.map(s => SF6.normNota(s.nota));
+  prog = SF6.trialProgress(got, want);
+  const pass = back === 0 && prog === want.length;
+  if (pass) tok++;
+  console.log((pass ? 'OK  ' : 'FAIL') + ' [overlay] ' + fx + ' en directo: llega a ' + prog + '/' + want.length + ', retrocesos ' + back);
+}
+const tpOk = tok === tp.length + 2;
+console.log(ok + '/' + cases.length + ' casos, ' + fok + '/' + (fixtures.length + 1) + ' grabaciones reales, ' + tok + '/' + (tp.length + 2) + ' overlay');
+process.exit(ok === cases.length && fok === fixtures.length + 1 && tpOk ? 0 : 1);

@@ -639,8 +639,24 @@
     }
     return { version: 2, fps: 60, scheme: scheme || 'classic', frames };
   }
+  function trialProgress(got, want, junk) {
+    junk = junk === undefined ? 2 : junk;
+    let best = 0, bestEnd = -1;
+    for (let i = 0; i < got.length; i++) {
+      if (got[i] !== want[0]) continue;
+      let j = i, k = 0, skips = 0, end = i;
+      while (j < got.length && k < want.length) {
+        if (got[j] === want[k]) { k++; end = j; skips = 0; }
+        else if (++skips > junk) break;
+        j++;
+      }
+      if (got.length - 1 - end > junk) continue;
+      if (end > bestEnd || (end === bestEnd && k > best)) { best = k; bestEnd = end; }
+    }
+    return best;
+  }
   function normNota(n) { return String(n).replace(/^5(?=[A-Z])/, '').replace(/\s+/g, ''); }
 
-  root.SF6 = { MOTIONS, CLASSIC_BTNS, MODERN_BTNS, BIT, MBIT, MIRROR, chars, registerCharacter, parse, partsOf, classify, parseText, stepsToText, parseDSL, relativeDirs, normalizeNota, normNota, dirGroup };
+  root.SF6 = { MOTIONS, trialProgress, CLASSIC_BTNS, MODERN_BTNS, BIT, MBIT, MIRROR, chars, registerCharacter, parse, partsOf, classify, parseText, stepsToText, parseDSL, relativeDirs, normalizeNota, normNota, dirGroup };
 })(typeof window !== 'undefined' ? window : globalThis);
 if (typeof module !== 'undefined') module.exports = globalThis.SF6;

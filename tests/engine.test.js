@@ -40,19 +40,25 @@ const fixtures = [
   {
     file: 'juri_fse_trial.json', char: 'juri',
     name: 'Trial real con Feng Shui Engine (pasos que el juego marcó como conseguidos)',
-    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', 'j.214MK+HK', '236236HK'],
     minSteps: 30
   },
   {
     file: 'juri_fse_trial_2.json', char: 'juri',
     name: 'Mismo trial, SA2 con la primera media vuelta incompleta (2, 1, neutral, 2, 1, 4)',
-    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '4HK', '6MP', '4HK', 'j.214MK+HK', '236236HK'],
     minSteps: 30
   },
   {
     file: 'juri_fse_trial_3loops.json', char: 'juri',
     name: 'Mismo trial con una vuelta extra de Saihasho (tres en lugar de dos)',
-    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '236LK', '4HK', '6MP', '4HK', '214MK+HK', '236236HK'],
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '236LK', '236LK', '236LK', '4HK', '6MP', '4HK', 'j.214MK+HK', '236236HK'],
+    minSteps: 30
+  },
+  {
+    file: 'juri_fse_divekick_od.json', char: 'juri',
+    name: 'Trial FSE: divekick OD tras cadena aérea (el hitstop alarga el salto) y 5HK sin Shiren-sen',
+    checkpoints: ['6HP', '214214MP', '6HP', '236LK+HK', '4HK', 'j.LP', 'j.MP', 'j.MK', 'j.214MK+HK', '5HK', '236236HK'],
     minSteps: 30
   }
 ];

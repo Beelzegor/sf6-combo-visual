@@ -30,7 +30,7 @@ SF6.registerCharacter({
       { name: 'Fuhajin', m: '214', type: 'K', kind: 'special', strength: true },
       { name: 'Tensenrin', m: '623', type: 'P', kind: 'special', strength: true }
     ],
-    followups: [{ after: 'Shiku-sen', type: 'K', name: 'Shiren-sen', win: 45 }],
+    followups: [{ after: 'Shiku-sen', type: 'K', name: 'Shiren-sen', win: 45, air: true }],
     fd: {
       '5LP': [4, 4, 14, 'csS'], '5MP': [6, 5, 21, 'sSt'], '5HP': [10, 3, 36, 'sS'],
       '5LK': [5, 3, 16, 'sS'], '5MK': [5, 6, 27, 'sS', 2], '5HK': [17, 4, 39, ''],

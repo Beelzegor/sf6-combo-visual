@@ -23,13 +23,13 @@ Convierte lo que haces con tu control en una imagen limpia de tu combo de **Stre
 
 ## Personajes
 
-| Personaje | Clásico | Moderno |
-|---|---|---|
-| Juri | Completo con frame data | Especiales asistidos por verificar |
-| Ken | Completo con frame data | Especiales asistidos por verificar |
-| Guile | Completo con frame data y cargas | Especiales asistidos por verificar |
+Están los 32 personajes del plantel actual (años 1 a 4): A.K.I., Akuma, Alex, Arjun, Blanka, C. Viper, Cammy, Chun-Li, Dee Jay, Dhalsim, E. Honda, Ed, Elena, Guile, Ingrid, Jamie, JP, Juri, Ken, Kimberly, Lily, Luke, M. Bison, Mai, Manon, Marisa, Rashid, Ryu, Sagat, Terry, Yasmine y Zangief.
 
-Cada personaje es un archivo en `data/characters/`. Añadir uno nuevo es copiar uno existente y cambiar sus movimientos y su frame data (ver [Añadir un personaje](#añadir-un-personaje)).
+- **Juri, Ken y Guile** están ajustados a mano y comprobados con grabaciones reales (incluido el Feng Shui Engine de Juri).
+- **El resto** se genera con `tools/gen_characters.py` a partir de la base de datos de FAT: normales, normales de comando, target combos (también aéreos), especiales, OD, Super Arts, seguimientos, especiales de dos o tres botones, cargas, 360, 720, medio círculo, duración del salto y frame data. `tests/roster.test.js` comprueba que cada uno de esos movimientos se detecta a partir de su input.
+- Los especiales asistidos de los controles modernos salen de la misma base de datos y están por verificar.
+
+Cada personaje es un archivo en `data/characters/`.
 
 ## Uso rápido
 
@@ -115,12 +115,23 @@ Genera `dist/sf6-combo-visual.html` y `dist/sf6-combo-overlay.html`, que funcion
 
 ## Añadir un personaje
 
-Copia `data/characters/juri.js` y cambia:
+Para regenerar los personajes desde FAT:
+
+```
+git clone --depth 1 https://github.com/D4RKONION/FAT
+python3 tools/gen_characters.py FAT/src/js/constants/framedata/SF6FrameData.json
+```
+
+El generador no toca `juri.js`, `ken.js` ni `guile.js`, y actualiza los `<script>` de `index.html` y `overlay.html`. Para un personaje nuevo, añade su nombre, id y color en `ROSTER` dentro del generador.
+
+Para hacer uno a mano, copia `data/characters/juri.js` y cambia:
 
 - `command`: normales con dirección (únicos).
 - `tc`: target combos, paso por paso.
-- `specials`: motion (`236`, `214`, `623`, `236236`, `214214`, `[4]6`, `[2]8`, `[4]646`), botones y tipo (`special` o `super` con su `tag` SA1, SA2 o SA3). El orden importa: primero Super Arts, luego OD y al final los especiales normales.
+- `specials`: motion (`236`, `214`, `623`, `22`, `63214`, `4268` para 360, `42684268` para 720, `214236`, `236236`, `214214`, `[4]6`, `[2]8`, `[4]646`), botones y tipo (`special` o `super` con su `tag` SA1, SA2 o SA3). El orden importa: primero Super Arts, luego OD y al final los especiales normales.
 - `followups`: seguimientos que salen después de un especial.
+- `pairs`: especiales de dos o tres botones del mismo tipo, con dirección opcional (`d`) y versión aérea (`air`).
+- `jump`: frames de prejump y de salto (por defecto `[4, 38]`).
 - `fd`: frame data por notación o nombre: `[arranque, activos, total, cancels, impactos]`, donde los cancels son `c` (chain), `s` (especial), `S` (super) y `t` (target combo), e `impactos` es opcional (por defecto 1).
 - `modern.sp`: especial asistido por dirección (`N`, `F`, `D`, `B`) y `modern.air`.
 
@@ -128,12 +139,13 @@ Luego añade el `<script>` en `index.html` y `overlay.html`, y crea casos en `te
 
 ## Datos y créditos
 
-- Frame data de [Ultimate Frame Data](https://ultimateframedata.com/sf6).
+- Frame data de Juri, Ken y Guile de [Ultimate Frame Data](https://ultimateframedata.com/sf6). El resto del plantel sale de [FAT (Frame Assistant Tool)](https://github.com/D4RKONION/FAT) de D4RKONION; solo se usan los datos numéricos y los comandos.
 - Street Fighter 6, sus personajes e iconos pertenecen a Capcom. Este proyecto no está afiliado a Capcom.
 - El código está bajo licencia MIT. Los iconos de `assets/icons` no están cubiertos por esa licencia.
 
 ## Pendiente
 
-- Más personajes (Ryu es el siguiente).
+- Tifa y Bosch cuando salgan (2027).
+- Ajustar con grabaciones reales los personajes generados.
 - Verificar los especiales asistidos de los controles modernos y sus iconos.
 - Tiempos exactos de Super Arts, Drive Rush y Parry (hoy aproximados).

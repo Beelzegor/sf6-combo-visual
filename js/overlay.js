@@ -27,12 +27,14 @@
     const rel = r => r.getBoundingClientRect().top - svgEl.getBoundingClientRect().top;
     const start = rel(rows[0]);
     head.style.height = start + 'px';
-    const avail = Math.max(60, window.innerHeight - start - 20);
+    const stepH = rows.length > 1 ? rel(rows[1]) - rel(rows[0]) : 0;
+    const avail = +q.rows && stepH ? Math.min(+q.rows, rows.length) * stepH : Math.max(60, window.innerHeight - start - 20);
     list.style.height = avail + 'px';
     const top = rel;
     const total = svgEl.getBoundingClientRect().height - start;
     const cur = rows[Math.min(progress, rows.length - 1)];
-    const off = Math.max(0, Math.min(top(cur) - start - avail * 0.3, total - avail));
+    let off = Math.max(0, Math.min(top(cur) - start - avail * 0.3, total - avail));
+    if (stepH) off = Math.min(Math.round(off / stepH) * stepH, Math.max(0, total - avail));
     const shift = start + (total > avail ? off : 0);
     if (!scrollTrial.ready) {
       inner.style.transition = 'none';

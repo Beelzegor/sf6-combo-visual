@@ -394,7 +394,9 @@ function loadPayload(o) {
 function baseURL() { return location.href.split('#')[0].replace(/[^/]*$/, ''); }
 function shareURL() { return baseURL() + 'index.html#c=' + encode(comboPayload()); }
 function padPayload() { return encode({ sc: app.scheme, pad: P().pad }); }
-function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&side=' + app.side + '&peer=' + relayId() + '&pad=' + padPayload() + '&c=' + encode(comboPayload()); }
+$('ovRows').value = store.get('ovRows', 8);
+$('ovRows').onchange = e => { const n = Math.max(2, Math.min(40, Math.round(+e.target.value) || 8)); e.target.value = n; store.set('ovRows', n); };
+function overlayURL(mode) { return baseURL() + 'overlay.html#m=' + mode + '&rows=' + (+$('ovRows').value || 8) + '&side=' + app.side + '&peer=' + relayId() + '&pad=' + padPayload() + '&c=' + encode(comboPayload()); }
 function updateShare() {
   if (!$('shareURL')) return;
   $('shareURL').value = app.steps.length ? shareURL() : '';

@@ -268,6 +268,7 @@ function trackPoll(now) {
     if (typeof relay !== 'undefined' && relay.on) relay.stats && relay.stats(max);
   }
 }
+const ring = { t0: performance.now(), last: -1, frames: [] };
 function poll() {
   const now = performance.now();
   trackPoll(now);
@@ -275,6 +276,10 @@ function poll() {
   const s = { d: st.d, m: app.scheme === 'modern' ? st.mm : st.m };
   if (!bridge.connected) showLive(s.d, s.m, 'en vivo');
   if (typeof relay !== 'undefined') relay.push(s.d, s.m);
+  const ri = Math.floor((now - ring.t0) / (1000 / 60));
+  if (ring.last < 0) ring.last = ri - 1;
+  while (ring.last < ri) { ring.last++; ring.frames.push([s.d, s.m]); }
+  if (ring.frames.length > 3900) ring.frames.splice(0, ring.frames.length - 3600);
   if (gp.recording && !bridge.connected) {
     if (gp.lastPoll && now - gp.lastPoll > gp.maxGap) gp.maxGap = now - gp.lastPoll;
     const idx = Math.floor((now - gp.t0) / (1000 / 60));
@@ -444,6 +449,18 @@ $('recSave').onclick = async () => {
   try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
   if (dl) { try { await dl.save({ filename: fname, data }); } catch (e) { } return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' })); a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+};
+
+async function saveJSON(fname, data) {
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) { try { await dl.save({ filename: fname, data }); } catch (e) { } return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' })); a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+}
+$('ringSave').onclick = () => {
+  const fr = ring.frames.slice(-3600);
+  if (!fr.some(f => f[0] !== 5 || f[1])) { toast('No hay inputs en los últimos 60 s'); return; }
+  saveJSON('ultimos60s_' + app.char + '_' + Date.now() + '.json', JSON.stringify({ version: 2, fps: 60, scheme: app.scheme, char: app.char, side: app.side, frames: fr, flips: [], note: 'últimos 60 s' }));
 };
 
 $('pngBtn').onclick = () => {
